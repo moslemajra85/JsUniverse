@@ -5,12 +5,12 @@ Each milestone should produce a testable, reviewable result.
 
 ## Milestone 0: Engineering foundation
 
-- Establish product requirements and contribution rules.
-- Select the initial stack and record the decision.
-- Scaffold the application without sample-feature clutter.
-- Add formatting, static analysis, and unit-test commands.
-- Add continuous integration for pull requests and the main branch.
-- Document local setup and environment variables.
+- [x] Establish product requirements and contribution rules.
+- [x] Select the initial stack and record the decision.
+- [x] Scaffold the application without sample-feature clutter.
+- [x] Add formatting, static analysis, and unit-test commands.
+- [x] Add continuous integration for pull requests and the primary branch.
+- [x] Document local setup and current environment requirements.
 
 **Exit criteria:** a new contributor can install dependencies, start the app, run
 all checks, and understand why the initial stack was selected.

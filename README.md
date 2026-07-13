@@ -1,5 +1,7 @@
 # JavaScript Adventure Lab
 
+[![Continuous Integration](https://github.com/moslemajra85/JsUniverse/actions/workflows/ci.yml/badge.svg)](https://github.com/moslemajra85/JsUniverse/actions/workflows/ci.yml)
+
 JavaScript Adventure Lab is an interactive learning environment for mastering
 modern vanilla JavaScript, the DOM, state management, application architecture,
 drag-and-drop interactions, and purposeful web animation.
@@ -10,9 +12,9 @@ will encounter in professional work.
 
 ## Current status
 
-The project has a runnable React and TypeScript application foundation. Product
-features have not been implemented yet. The next milestone is continuous
-integration for the existing format, lint, type-check, test, and build commands.
+The project has a runnable React and TypeScript application foundation with
+continuous integration. Product features have not been implemented yet. The next
+milestone is the accessible learning-workspace shell.
 
 ## Local development
 
