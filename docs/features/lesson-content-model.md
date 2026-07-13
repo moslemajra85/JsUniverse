@@ -2,13 +2,9 @@
 
 ## Purpose
 
-The first lesson-engine slice turns lesson summaries into ordered learning paths.
-Each selected lesson now renders content from typed data rather than relying on
-lesson-specific JSX.
-
-This slice is deliberately read-only. Interactive checkpoints, completion state,
-hints, and persistence will be introduced only after the content boundary is
-stable.
+The lesson engine turns lesson summaries, learning steps, and prediction
+checkpoints into typed data rather than lesson-specific JSX. Completion is kept
+outside this content model so definitions remain portable and read-only.
 
 ## Acceptance criteria
 
@@ -18,7 +14,10 @@ stable.
 - Step kinds have visible text labels rather than color-only meaning.
 - Selecting another lesson replaces the complete path without feature-specific
   rendering conditions.
-- Lesson numbers and slugs are unique, and step IDs are unique within a lesson.
+- Lesson numbers and slugs are unique, and step IDs are unique across the course.
+- Prediction questions define answer options, correct-answer references, and
+  useful feedback.
+- Semantic authoring mistakes produce actionable validation errors.
 - The model introduces no content parser, arbitrary HTML, or new dependency.
 
 ## Model
@@ -26,12 +25,35 @@ stable.
 ```ts
 type LessonStepKind = 'explain' | 'predict' | 'practice'
 
-interface LessonStep {
+interface BaseLessonStep {
   readonly id: string
-  readonly kind: LessonStepKind
   readonly title: string
   readonly body: string
 }
+
+interface PredictionOption {
+  readonly id: string
+  readonly label: string
+}
+
+interface PredictionStep extends BaseLessonStep {
+  readonly kind: 'predict'
+  readonly question: string
+  readonly options: readonly PredictionOption[]
+  readonly correctOptionId: string
+  readonly successFeedback: string
+  readonly retryFeedback: string
+}
+
+interface ExplanationStep extends BaseLessonStep {
+  readonly kind: 'explain'
+}
+
+interface PracticeStep extends BaseLessonStep {
+  readonly kind: 'practice'
+}
+
+type LessonStep = ExplanationStep | PredictionStep | PracticeStep
 ```
 
 The sequence mirrors the product's teaching method:
@@ -46,8 +68,9 @@ The sequence mirrors the product's teaching method:
 - `LessonPath` owns semantic step rendering and kind presentation.
 - `App` chooses the active lesson and composes the path; it does not inspect step
   kinds.
-- `lessons.test.ts` protects content invariants that TypeScript cannot express,
-  such as runtime uniqueness and required sequence order.
+- `lessonValidation.ts` protects relationships TypeScript cannot express, such
+  as course-wide uniqueness, sequence order, and correct-answer references.
+- `lessons.test.ts` keeps focused regression checks for bundled content.
 
 ## Why plain text first?
 
@@ -59,7 +82,7 @@ lesson-engine boundary.
 ## Known limitations
 
 - Each lesson currently has exactly one three-step sequence.
-- Steps cannot contain code examples, media, simulations, or interactive inputs.
-- Content validation runs in tests rather than when external content is loaded.
-- Steps have no completion state.
+- Practice steps cannot yet define code examples, media, or simulations.
+- Content is trusted TypeScript rather than parsed external data.
+- Completion state intentionally lives outside lesson definitions.
 - Lesson content is bundled into the application.

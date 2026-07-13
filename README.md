@@ -15,7 +15,7 @@ will encounter in professional work.
 The project has a runnable React and TypeScript learning workspace with hash-based
 lesson navigation, structured lesson paths, interactive prediction checkpoints,
 durable browser-local progress, and continuous integration. The next
-lesson-engine milestone is useful author-facing content validation.
+major milestone is the editable code workspace and isolated preview.
 
 ## Local development
 
