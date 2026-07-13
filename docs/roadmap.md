@@ -28,7 +28,7 @@ deployable, even though the lesson content is still static.
 ## Milestone 2: Lesson engine
 
 - [x] Define the smallest lesson-content model.
-- Render explanations, objectives, steps, and checkpoints.
+- [x] Render explanations, objectives, steps, and checkpoints.
 - Support progress through a lesson and safe reset behavior.
 - Validate content with useful author-facing errors.
 

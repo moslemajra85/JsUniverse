@@ -1,11 +1,35 @@
 export type LessonStepKind = 'explain' | 'predict' | 'practice'
 
-export interface LessonStep {
+interface BaseLessonStep {
   readonly id: string
   readonly kind: LessonStepKind
   readonly title: string
   readonly body: string
 }
+
+export interface PredictionOption {
+  readonly id: string
+  readonly label: string
+}
+
+export interface PredictionStep extends BaseLessonStep {
+  readonly kind: 'predict'
+  readonly question: string
+  readonly options: readonly PredictionOption[]
+  readonly correctOptionId: string
+  readonly successFeedback: string
+  readonly retryFeedback: string
+}
+
+interface ExplanationStep extends BaseLessonStep {
+  readonly kind: 'explain'
+}
+
+interface PracticeStep extends BaseLessonStep {
+  readonly kind: 'practice'
+}
+
+export type LessonStep = ExplanationStep | PredictionStep | PracticeStep
 
 interface LessonDefinition {
   readonly number: number
@@ -53,6 +77,27 @@ export const lessons = [
         kind: 'predict',
         title: 'What happens after a click?',
         body: 'Before following an event through the browser, decide which should happen first: the click, the JavaScript listener, or the visible page update.',
+        question:
+          'After a person clicks a listening button, what happens before the page can visibly change?',
+        options: [
+          {
+            id: 'listener-runs',
+            label: 'The registered JavaScript event listener runs',
+          },
+          {
+            id: 'pixels-change',
+            label: 'The final pixels change without running JavaScript',
+          },
+          {
+            id: 'html-reloads',
+            label: 'The original HTML file reloads automatically',
+          },
+        ],
+        correctOptionId: 'listener-runs',
+        successFeedback:
+          'Exactly. The event reaches the listener, which can update the DOM before the browser paints a visible change.',
+        retryFeedback:
+          'Not yet. Think about which JavaScript instruction gets a chance to request the visible change.',
       },
       {
         id: 'trace-browser-work',
@@ -89,6 +134,18 @@ export const lessons = [
         kind: 'predict',
         title: 'Which value survives?',
         body: 'Read a short sequence of assignments and predict the final value before asking JavaScript. The gap between prediction and result is where learning happens.',
+        question:
+          'If score starts at 1 and score = score + 2 runs, what value does score hold?',
+        options: [
+          { id: 'one', label: '1' },
+          { id: 'two', label: '2' },
+          { id: 'three', label: '3' },
+        ],
+        correctOptionId: 'three',
+        successFeedback:
+          'Correct. JavaScript reads the old value 1, adds 2, then assigns the result 3 back to score.',
+        retryFeedback:
+          'Try the right side first: read the current value, add 2, and only then assign the result.',
       },
       {
         id: 'name-application-state',
@@ -125,6 +182,24 @@ export const lessons = [
         kind: 'predict',
         title: 'Return or display?',
         body: 'Predict whether a function returns information to its caller or changes the visible page. Those outcomes are useful, but they are not interchangeable.',
+        question:
+          'A function only runs return number * 2. What does calling it with 4 do?',
+        options: [
+          { id: 'returns-eight', label: 'It returns the number 8' },
+          {
+            id: 'renders-eight',
+            label: 'It automatically displays 8 on the page',
+          },
+          {
+            id: 'changes-four',
+            label: 'It changes the original number into 8',
+          },
+        ],
+        correctOptionId: 'returns-eight',
+        successFeedback:
+          'Right. The caller receives 8. Displaying that value would require a separate DOM operation.',
+        retryFeedback:
+          'Look closely at the only instruction: return sends a result to the caller but does not update the DOM.',
       },
       {
         id: 'extract-repeated-work',
@@ -161,6 +236,27 @@ export const lessons = [
         kind: 'predict',
         title: 'Will the new element appear?',
         body: 'Creating an element gives JavaScript a node, but it remains detached. Predict what additional operation is required before a person can see it.',
+        question:
+          'After document.createElement creates a task card, what makes it part of the visible document?',
+        options: [
+          {
+            id: 'append-node',
+            label: 'Append it to an element already connected to the document',
+          },
+          {
+            id: 'rename-variable',
+            label: 'Store it in a variable with a clearer name',
+          },
+          {
+            id: 'create-again',
+            label: 'Call document.createElement a second time',
+          },
+        ],
+        correctOptionId: 'append-node',
+        successFeedback:
+          'Correct. Appending the detached node to a connected parent places it in the live DOM tree.',
+        retryFeedback:
+          'The node already exists. Think about the parent-child connection missing from the document tree.',
       },
       {
         id: 'build-task-card',

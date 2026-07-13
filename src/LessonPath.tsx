@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { PredictionCheckpoint } from './PredictionCheckpoint'
 import { lessonStepLabels, type Lesson, type LessonStepKind } from './lessons'
 
 const stepKindMarks = {
@@ -7,6 +9,25 @@ const stepKindMarks = {
 } as const satisfies Record<LessonStepKind, string>
 
 export function LessonPath({ lesson }: { lesson: Lesson }) {
+  const [completedStepIds, setCompletedStepIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  )
+  const predictionStepCount = lesson.steps.filter(
+    (step) => step.kind === 'predict',
+  ).length
+
+  function markComplete(stepId: string) {
+    setCompletedStepIds((current) => new Set(current).add(stepId))
+  }
+
+  function resetCompletion(stepId: string) {
+    setCompletedStepIds((current) => {
+      const next = new Set(current)
+      next.delete(stepId)
+      return next
+    })
+  }
+
   return (
     <section className="lesson-path" aria-labelledby="lesson-path-title">
       <div className="lesson-path__heading">
@@ -14,10 +35,16 @@ export function LessonPath({ lesson }: { lesson: Lesson }) {
           <p className="eyebrow">Learning sequence</p>
           <h2 id="lesson-path-title">Lesson path</h2>
         </div>
-        <p>
-          Start with the idea, make a prediction, then apply what you
-          understood.
-        </p>
+        <div className="lesson-path__summary">
+          <p>
+            Start with the idea, make a prediction, then apply what you
+            understood.
+          </p>
+          <p className="checkpoint-progress" role="status" aria-live="polite">
+            <strong>{completedStepIds.size}</strong> of {predictionStepCount}{' '}
+            checkpoint complete
+          </p>
+        </div>
       </div>
 
       <ol className="step-list">
@@ -35,6 +62,13 @@ export function LessonPath({ lesson }: { lesson: Lesson }) {
               </div>
               <h3>{step.title}</h3>
               <p>{step.body}</p>
+              {step.kind === 'predict' ? (
+                <PredictionCheckpoint
+                  step={step}
+                  onComplete={() => markComplete(step.id)}
+                  onReset={() => resetCompletion(step.id)}
+                />
+              ) : null}
             </article>
           </li>
         ))}
