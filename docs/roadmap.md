@@ -18,7 +18,7 @@ all checks, and understand why the initial stack was selected.
 ## Milestone 1: Application shell
 
 - [x] Create the responsive learning-workspace layout.
-- Add navigation between a lesson list and one lesson.
+- [x] Add navigation between a lesson list and one lesson.
 - [x] Establish accessible focus behavior and reduced-motion foundations.
 - [x] Add a minimal design-token system.
 

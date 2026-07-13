@@ -264,6 +264,15 @@ h3 {
   border: 0.0625rem solid transparent;
   border-radius: var(--radius-small);
   text-decoration: none;
+  transition:
+    border-color 160ms ease-out,
+    background-color 160ms ease-out,
+    transform 160ms ease-out;
+}
+
+.lesson-link:hover {
+  border-color: var(--color-border-strong);
+  background: rgba(174, 190, 255, 0.045);
 }
 
 .lesson-link--current {
@@ -273,18 +282,11 @@ h3 {
     rgba(66, 232, 170, 0.12),
     rgba(66, 232, 170, 0.025)
   );
-  transition:
-    border-color 160ms ease-out,
-    transform 160ms ease-out;
 }
 
 .lesson-link--current:hover {
   border-color: rgba(139, 255, 207, 0.4);
   transform: translateX(0.2rem);
-}
-
-.lesson-link--upcoming {
-  color: var(--color-text-muted);
 }
 
 .lesson-link__number {
@@ -311,10 +313,6 @@ h3 {
   font-weight: 680;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.lesson-link--upcoming .lesson-link__title {
-  color: #7e88a6;
 }
 
 .lesson-link__status {
@@ -348,6 +346,15 @@ h3 {
   max-width: 78rem;
   margin-inline: auto;
   margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.lesson-workspace--transitioning .lesson-header,
+.lesson-workspace--transitioning .lesson-grid {
+  animation: lesson-enter 280ms ease-out both;
+}
+
+.lesson-workspace--transitioning .lesson-grid {
+  animation-delay: 70ms;
 }
 
 .lesson-header h1 {
@@ -603,6 +610,18 @@ h3 {
 @keyframes orbit {
   to {
     offset-distance: 100%;
+  }
+}
+
+@keyframes lesson-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

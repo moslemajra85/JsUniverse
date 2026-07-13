@@ -3,9 +3,9 @@
 ## Purpose
 
 The workspace shell establishes the stable regions that future lesson, editor,
-preview, and visualization features will inhabit. This feature intentionally
-contains static lesson information: navigation behavior and lesson state belong
-to the next independently tested slice.
+preview, and visualization features will inhabit. The shell was delivered with
+static lesson information; hash-based lesson navigation was added in the next
+independently tested slice.
 
 ## Acceptance criteria
 
@@ -24,15 +24,16 @@ to the next independently tested slice.
 
 ## Responsibility boundaries
 
-- `App` owns the current static composition and curriculum fixture.
+- `App` owns the workspace composition and renders the active lesson.
 - `LessonLabel` owns repeated lesson-label markup only; it contains no state.
+- `lessons.ts` owns the current typed lesson summaries.
+- `useLessonNavigation` owns URL synchronization and focus movement.
 - `styles.css` owns layout, tokens, responsive behavior, and motion preferences.
 - The current test verifies landmarks, bypass navigation, current-page state, and
   progress semantics.
 
-No routing or global state library is justified by this feature. Lesson selection
-will introduce the smallest state boundary required by observable navigation
-behavior.
+No routing or global state library is justified by the current navigation needs.
+See [lesson navigation](lesson-navigation.md) for the implemented state boundary.
 
 ## Responsive behavior
 
@@ -43,8 +44,6 @@ for two useful columns.
 
 ## Known limitations
 
-- Only one lesson is available.
-- Lesson links do not switch content yet.
 - Responsive behavior is validated through CSS review rather than browser-level
   visual regression tests.
 - Progress is static and is not persisted.

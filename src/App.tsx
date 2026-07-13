@@ -1,27 +1,10 @@
-const curriculumLessons = [
-  {
-    number: 1,
-    title: 'Meet the browser',
-    status: 'current',
-  },
-  {
-    number: 2,
-    title: 'Values and variables',
-    status: 'upcoming',
-  },
-  {
-    number: 3,
-    title: 'Functions with a purpose',
-    status: 'upcoming',
-  },
-  {
-    number: 4,
-    title: 'Build the DOM',
-    status: 'upcoming',
-  },
-] as const
+import { defaultLesson, getLessonHash, lessons, type Lesson } from './lessons'
+import { useLessonNavigation } from './useLessonNavigation'
 
 export function App() {
+  const { activeLesson, hasNavigated, lessonWorkspaceRef, navigateToLesson } =
+    useLessonNavigation()
+
   return (
     <>
       <a className="skip-link" href="#lesson-workspace">
@@ -32,8 +15,12 @@ export function App() {
         <header className="topbar" id="top">
           <a
             className="brand"
-            href="#top"
+            href={getLessonHash(defaultLesson.slug)}
             aria-label="JavaScript Adventure Lab home"
+            onClick={(event) => {
+              event.preventDefault()
+              navigateToLesson(defaultLesson)
+            }}
           >
             <span className="brand__mark" aria-hidden="true">
               <span>{'{ }'}</span>
@@ -46,11 +33,13 @@ export function App() {
           <div className="course-progress">
             <span className="course-progress__label">Foundation path</span>
             <progress
-              aria-label="Foundation path progress: 1 of 8 lessons"
+              aria-label={`Viewing lesson ${activeLesson.number} of 8`}
               max="8"
-              value="1"
+              value={activeLesson.number}
             />
-            <span className="course-progress__value">1 / 8</span>
+            <span className="course-progress__value">
+              {activeLesson.number} / 8
+            </span>
           </div>
         </header>
 
@@ -63,49 +52,61 @@ export function App() {
               </div>
 
               <ol className="lesson-list">
-                {curriculumLessons.map((lesson) => (
-                  <li key={lesson.number}>
-                    {lesson.status === 'current' ? (
+                {lessons.map((lesson) => {
+                  const isCurrent = lesson.slug === activeLesson.slug
+
+                  return (
+                    <li key={lesson.number}>
                       <a
-                        className="lesson-link lesson-link--current"
-                        href="#lesson-workspace"
-                        aria-current="page"
-                        aria-label={`${lesson.title}, current lesson`}
+                        className={`lesson-link${
+                          isCurrent ? ' lesson-link--current' : ''
+                        }`}
+                        href={getLessonHash(lesson.slug)}
+                        aria-current={isCurrent ? 'page' : undefined}
+                        aria-label={
+                          isCurrent
+                            ? `${lesson.title}, current lesson`
+                            : lesson.title
+                        }
+                        onClick={(event) => {
+                          event.preventDefault()
+                          navigateToLesson(lesson)
+                        }}
                       >
-                        <LessonLabel lesson={lesson} />
+                        <LessonLabel lesson={lesson} isCurrent={isCurrent} />
                       </a>
-                    ) : (
-                      <span className="lesson-link lesson-link--upcoming">
-                        <LessonLabel lesson={lesson} />
-                      </span>
-                    )}
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ol>
             </nav>
 
             <p className="curriculum-note">
-              New lessons unlock as the learning engine grows.
+              Choose a lesson to preview its learning goal.
             </p>
           </aside>
 
           <main
-            className="lesson-workspace"
+            className={`lesson-workspace${
+              hasNavigated ? ' lesson-workspace--transitioning' : ''
+            }`}
             id="lesson-workspace"
+            key={activeLesson.slug}
+            ref={lessonWorkspaceRef}
             tabIndex={-1}
           >
             <div className="lesson-header">
               <div>
-                <p className="eyebrow">Lesson 01 · Orientation</p>
-                <h1>Meet the browser</h1>
-                <p className="lesson-header__summary">
-                  Learn what happens between writing JavaScript and seeing a
-                  page respond.
+                <p className="eyebrow">
+                  Lesson {String(activeLesson.number).padStart(2, '0')} ·{' '}
+                  {activeLesson.phase}
                 </p>
+                <h1>{activeLesson.title}</h1>
+                <p className="lesson-header__summary">{activeLesson.summary}</p>
               </div>
 
               <span className="lesson-status">
-                <span aria-hidden="true" /> Foundation
+                <span aria-hidden="true" /> {activeLesson.phase}
               </span>
             </div>
 
@@ -113,11 +114,11 @@ export function App() {
               <section className="lesson-canvas" aria-labelledby="canvas-title">
                 <div className="panel-heading">
                   <span className="panel-heading__index" aria-hidden="true">
-                    01
+                    {String(activeLesson.number).padStart(2, '0')}
                   </span>
                   <div>
                     <p className="eyebrow">Your workspace</p>
-                    <h2 id="canvas-title">A place to see JavaScript think</h2>
+                    <h2 id="canvas-title">{activeLesson.canvasTitle}</h2>
                   </div>
                 </div>
 
@@ -136,9 +137,7 @@ export function App() {
                 </div>
 
                 <p className="lesson-canvas__description">
-                  Future lessons will place explanations, editable code, and a
-                  live browser preview here. This shell establishes where each
-                  learning tool belongs before behavior is introduced.
+                  {activeLesson.description}
                 </p>
               </section>
 
@@ -146,9 +145,9 @@ export function App() {
                 <p className="eyebrow">Lesson guide</p>
                 <h2 id="guide-title">What you will understand</h2>
                 <ul className="objective-list">
-                  <li>What the browser does with HTML, CSS, and JavaScript</li>
-                  <li>Why the DOM is different from the HTML source</li>
-                  <li>How an event can cause visible change</li>
+                  {activeLesson.objectives.map((objective) => (
+                    <li key={objective}>{objective}</li>
+                  ))}
                 </ul>
 
                 <div className="mentor-note">
@@ -172,9 +171,13 @@ export function App() {
   )
 }
 
-type Lesson = (typeof curriculumLessons)[number]
-
-function LessonLabel({ lesson }: { lesson: Lesson }) {
+function LessonLabel({
+  lesson,
+  isCurrent,
+}: {
+  lesson: Lesson
+  isCurrent: boolean
+}) {
   return (
     <>
       <span className="lesson-link__number" aria-hidden="true">
@@ -183,7 +186,7 @@ function LessonLabel({ lesson }: { lesson: Lesson }) {
       <span className="lesson-link__content">
         <span className="lesson-link__title">{lesson.title}</span>
         <span className="lesson-link__status">
-          {lesson.status === 'current' ? 'Current lesson' : 'Coming next'}
+          {isCurrent ? 'Current lesson' : 'Available lesson'}
         </span>
       </span>
     </>
