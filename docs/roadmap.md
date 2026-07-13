@@ -105,4 +105,3 @@ slice is considered complete:
 - documentation reflects the resulting behavior;
 - CI passes;
 - the commit contains one coherent reason for change.
-

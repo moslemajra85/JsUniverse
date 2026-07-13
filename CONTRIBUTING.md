@@ -12,8 +12,23 @@ well-reasoned changes that leave the application understandable and working.
 
 ## Local development
 
-Setup and validation commands will be documented here after the initial stack is
-selected. Until then, no dependency or runtime requirement is implied.
+Use Node.js 22.12 or newer. If Node Version Manager is installed, select the
+documented version before installing dependencies:
+
+```bash
+nvm use
+npm install
+```
+
+Start the application with `npm run dev`. Before requesting review, run:
+
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
 ## Change requirements
 
@@ -43,4 +58,3 @@ necessary to implement the behavior safely.
 Use focused Conventional Commit-style messages. See the
 [engineering workflow](docs/engineering-workflow.md) for types, examples, and the
 complete development cycle.
-

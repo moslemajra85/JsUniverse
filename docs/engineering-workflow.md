@@ -71,16 +71,18 @@ that would matter if it broke.
 
 ### 4. Run the local quality checks
 
-The exact commands will be added when the stack is selected. The expected set is:
+Run every repository quality gate before requesting review:
 
-```text
-format check
-static analysis or linting
-type checking, if used
-unit and integration tests
-production build
-focused end-to-end tests, when justified
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
 ```
+
+Run focused end-to-end tests as well after the project introduces a workflow that
+justifies them.
 
 ### 5. Review the change
 
@@ -180,4 +182,3 @@ A feature is done when:
 - no secrets or unrelated changes are included;
 - CI passes on the pull request;
 - review is complete.
-
