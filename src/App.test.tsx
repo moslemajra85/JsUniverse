@@ -1,8 +1,12 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 
 describe('App', () => {
+  beforeEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
   it('provides accessible landmarks for the learning workspace', () => {
     render(<App />)
 
@@ -24,14 +28,73 @@ describe('App', () => {
     ).toHaveAttribute('href', '#lesson-workspace')
   })
 
-  it('announces the current lesson in the curriculum', () => {
+  it('selects a lesson and moves focus to its content', () => {
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('link', { name: 'Values and variables' }))
+
+    expect(window.location.hash).toBe('#lesson-values-and-variables')
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Values and variables' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', {
+        name: 'Values and variables, current lesson',
+      }),
+    ).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('main')).toHaveFocus()
+    expect(document.title).toBe(
+      'Values and variables | JavaScript Adventure Lab',
+    )
+    expect(screen.getByRole('progressbar')).toHaveAttribute('value', '2')
+  })
+
+  it('writes a stable URL when selecting the default lesson', () => {
+    render(<App />)
+
+    fireEvent.click(
+      screen.getByRole('link', { name: 'Meet the browser, current lesson' }),
+    )
+
+    expect(window.location.hash).toBe('#lesson-meet-the-browser')
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  it('opens a directly linked lesson from the URL hash', () => {
+    window.history.replaceState(null, '', '#lesson-build-the-dom')
+
     render(<App />)
 
     expect(
-      screen.getByRole('link', {
-        name: 'Meet the browser, current lesson',
-      }),
+      screen.getByRole('heading', { level: 1, name: 'Build the DOM' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'Build the DOM, current lesson' }),
     ).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByRole('progressbar')).toHaveAttribute('value', '1')
+  })
+
+  it('synchronizes lesson content when browser history changes', () => {
+    render(<App />)
+
+    window.history.pushState(null, '', '#lesson-functions-with-a-purpose')
+    fireEvent(window, new PopStateEvent('popstate'))
+
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Functions with a purpose',
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  it('falls back safely when a lesson hash is unknown', () => {
+    window.history.replaceState(null, '', '#lesson-not-real')
+
+    render(<App />)
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Meet the browser' }),
+    ).toBeInTheDocument()
   })
 })

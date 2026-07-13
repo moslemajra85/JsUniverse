@@ -12,9 +12,9 @@ will encounter in professional work.
 
 ## Current status
 
-The project has a runnable React and TypeScript application foundation with
-continuous integration. Product features have not been implemented yet. The next
-milestone is the accessible learning-workspace shell.
+The project has a runnable React and TypeScript learning-workspace shell with
+hash-based lesson navigation and continuous integration. The next milestone is
+the smallest lesson-content model and rendering engine.
 
 ## Local development
 
