@@ -69,6 +69,28 @@ The npm cache stores downloaded package data, not the `node_modules` directory.
 The lockfile remains the source of truth, and `npm ci` still performs the clean
 installation.
 
+## Protected primary branch
+
+The `master` branch is protected on GitHub. The live policy requires:
+
+- every change to arrive through a pull request;
+- the `Quality gates` check to pass against the latest `master` commit;
+- all pull-request conversations to be resolved;
+- a linear Git history;
+- administrators to follow the same rules;
+- force pushes and branch deletion to remain disabled.
+
+The required approval count is intentionally zero while the project has one
+maintainer. GitHub does not allow a pull-request author to approve their own
+change, so requiring one approval would block legitimate solo development. Once
+another maintainer regularly reviews changes, raise the requirement to at least
+one approval.
+
+These rules turn CI from information into enforcement. A failed or pending check
+prevents merging, even if the change appears to work locally. Repository
+administrators can modify the policy, but changes should be documented and made
+only for an explicit operational reason.
+
 ## Why CI is valuable
 
 CI catches problems such as:
