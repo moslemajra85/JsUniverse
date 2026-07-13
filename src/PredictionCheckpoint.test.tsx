@@ -16,6 +16,7 @@ describe('PredictionCheckpoint', () => {
     render(
       <PredictionCheckpoint
         step={predictionStep}
+        isComplete={false}
         onComplete={onComplete}
         onReset={vi.fn()}
       />,
@@ -41,9 +42,10 @@ describe('PredictionCheckpoint', () => {
     const onComplete = vi.fn()
     const onReset = vi.fn()
 
-    render(
+    const view = render(
       <PredictionCheckpoint
         step={predictionStep}
+        isComplete={false}
         onComplete={onComplete}
         onReset={onReset}
       />,
@@ -55,17 +57,58 @@ describe('PredictionCheckpoint', () => {
     fireEvent.click(correctOption)
     fireEvent.click(screen.getByRole('button', { name: 'Check prediction' }))
 
+    expect(onComplete).toHaveBeenCalledOnce()
+
+    view.rerender(
+      <PredictionCheckpoint
+        step={predictionStep}
+        isComplete
+        onComplete={onComplete}
+        onReset={onReset}
+      />,
+    )
+
     expect(screen.getByText(predictionStep.successFeedback)).toBeInTheDocument()
     expect(correctOption).toBeDisabled()
-    expect(onComplete).toHaveBeenCalledOnce()
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset checkpoint' }))
 
     expect(onReset).toHaveBeenCalledOnce()
+
+    view.rerender(
+      <PredictionCheckpoint
+        step={predictionStep}
+        isComplete={false}
+        onComplete={onComplete}
+        onReset={onReset}
+      />,
+    )
+
     expect(correctOption).not.toBeChecked()
     expect(correctOption).not.toBeDisabled()
     expect(
       screen.getByRole('button', { name: 'Check prediction' }),
     ).toBeDisabled()
+  })
+
+  it('restores a completed checkpoint from parent progress', () => {
+    render(
+      <PredictionCheckpoint
+        step={predictionStep}
+        isComplete
+        onComplete={vi.fn()}
+        onReset={vi.fn()}
+      />,
+    )
+
+    expect(
+      screen.getByRole('radio', {
+        name: 'The registered JavaScript event listener runs',
+      }),
+    ).toBeChecked()
+    expect(screen.getByText(predictionStep.successFeedback)).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Reset checkpoint' }),
+    ).toBeInTheDocument()
   })
 })

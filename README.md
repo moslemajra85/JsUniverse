@@ -14,8 +14,8 @@ will encounter in professional work.
 
 The project has a runnable React and TypeScript learning workspace with hash-based
 lesson navigation, structured lesson paths, interactive prediction checkpoints,
-and continuous integration. The next lesson-engine milestone is durable lesson
-progress with safe reset behavior.
+durable browser-local progress, and continuous integration. The next
+lesson-engine milestone is useful author-facing content validation.
 
 ## Local development
 

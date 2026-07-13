@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { PredictionCheckpoint } from './PredictionCheckpoint'
 import { lessonStepLabels, type Lesson, type LessonStepKind } from './lessons'
 
@@ -8,25 +7,25 @@ const stepKindMarks = {
   practice: '→',
 } as const satisfies Record<LessonStepKind, string>
 
-export function LessonPath({ lesson }: { lesson: Lesson }) {
-  const [completedStepIds, setCompletedStepIds] = useState<ReadonlySet<string>>(
-    () => new Set(),
-  )
-  const predictionStepCount = lesson.steps.filter(
-    (step) => step.kind === 'predict',
+interface LessonPathProps {
+  readonly lesson: Lesson
+  readonly completedStepIds: ReadonlySet<string>
+  readonly isStorageAvailable: boolean
+  readonly onCheckpointComplete: (stepId: string) => void
+  readonly onCheckpointReset: (stepId: string) => void
+}
+
+export function LessonPath({
+  lesson,
+  completedStepIds,
+  isStorageAvailable,
+  onCheckpointComplete,
+  onCheckpointReset,
+}: LessonPathProps) {
+  const predictionSteps = lesson.steps.filter((step) => step.kind === 'predict')
+  const completedCheckpointCount = predictionSteps.filter((step) =>
+    completedStepIds.has(step.id),
   ).length
-
-  function markComplete(stepId: string) {
-    setCompletedStepIds((current) => new Set(current).add(stepId))
-  }
-
-  function resetCompletion(stepId: string) {
-    setCompletedStepIds((current) => {
-      const next = new Set(current)
-      next.delete(stepId)
-      return next
-    })
-  }
 
   return (
     <section className="lesson-path" aria-labelledby="lesson-path-title">
@@ -41,8 +40,13 @@ export function LessonPath({ lesson }: { lesson: Lesson }) {
             understood.
           </p>
           <p className="checkpoint-progress" role="status" aria-live="polite">
-            <strong>{completedStepIds.size}</strong> of {predictionStepCount}{' '}
-            checkpoint complete
+            <strong>{completedCheckpointCount}</strong> of{' '}
+            {predictionSteps.length} checkpoint complete
+          </p>
+          <p className="checkpoint-storage-note" aria-live="polite">
+            {isStorageAvailable
+              ? 'Progress is saved in this browser.'
+              : 'Progress is available for this session but could not be saved.'}
           </p>
         </div>
       </div>
@@ -65,8 +69,9 @@ export function LessonPath({ lesson }: { lesson: Lesson }) {
               {step.kind === 'predict' ? (
                 <PredictionCheckpoint
                   step={step}
-                  onComplete={() => markComplete(step.id)}
-                  onReset={() => resetCompletion(step.id)}
+                  isComplete={completedStepIds.has(step.id)}
+                  onComplete={() => onCheckpointComplete(step.id)}
+                  onReset={() => onCheckpointReset(step.id)}
                 />
               ) : null}
             </article>

@@ -1,22 +1,25 @@
 import { useState, type FormEvent } from 'react'
 import type { PredictionStep } from './lessons'
 
-type AttemptStatus = 'idle' | 'incorrect' | 'correct'
+type AttemptStatus = 'idle' | 'incorrect'
 
 interface PredictionCheckpointProps {
   readonly step: PredictionStep
+  readonly isComplete: boolean
   readonly onComplete: () => void
   readonly onReset: () => void
 }
 
 export function PredictionCheckpoint({
   step,
+  isComplete,
   onComplete,
   onReset,
 }: PredictionCheckpointProps) {
-  const [selectedOptionId, setSelectedOptionId] = useState('')
+  const [selectedOptionId, setSelectedOptionId] = useState(() =>
+    isComplete ? step.correctOptionId : '',
+  )
   const [status, setStatus] = useState<AttemptStatus>('idle')
-  const isComplete = status === 'correct'
   const questionId = `${step.id}-question`
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -27,7 +30,6 @@ export function PredictionCheckpoint({
     }
 
     if (selectedOptionId === step.correctOptionId) {
-      setStatus('correct')
       onComplete()
       return
     }
@@ -41,12 +43,11 @@ export function PredictionCheckpoint({
     onReset()
   }
 
-  const feedback =
-    status === 'correct'
-      ? step.successFeedback
-      : status === 'incorrect'
-        ? step.retryFeedback
-        : ''
+  const feedback = isComplete
+    ? step.successFeedback
+    : status === 'incorrect'
+      ? step.retryFeedback
+      : ''
 
   return (
     <form className="checkpoint" onSubmit={handleSubmit}>
@@ -100,7 +101,9 @@ export function PredictionCheckpoint({
         )}
 
         <p
-          className={`checkpoint__feedback checkpoint__feedback--${status}`}
+          className={`checkpoint__feedback checkpoint__feedback--${
+            isComplete ? 'correct' : status
+          }`}
           aria-live="polite"
         >
           {feedback}

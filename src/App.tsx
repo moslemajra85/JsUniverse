@@ -1,10 +1,17 @@
 import { defaultLesson, getLessonHash, lessons, type Lesson } from './lessons'
 import { LessonPath } from './LessonPath'
+import { useCheckpointProgress } from './useCheckpointProgress'
 import { useLessonNavigation } from './useLessonNavigation'
 
 export function App() {
   const { activeLesson, hasNavigated, lessonWorkspaceRef, navigateToLesson } =
     useLessonNavigation()
+  const {
+    completedStepIds,
+    isStorageAvailable,
+    markCheckpointComplete,
+    resetCheckpoint,
+  } = useCheckpointProgress()
 
   return (
     <>
@@ -166,7 +173,13 @@ export function App() {
               </aside>
             </div>
 
-            <LessonPath lesson={activeLesson} />
+            <LessonPath
+              lesson={activeLesson}
+              completedStepIds={completedStepIds}
+              isStorageAvailable={isStorageAvailable}
+              onCheckpointComplete={markCheckpointComplete}
+              onCheckpointReset={resetCheckpoint}
+            />
           </main>
         </div>
       </div>

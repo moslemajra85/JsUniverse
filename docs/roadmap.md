@@ -29,7 +29,7 @@ deployable, even though the lesson content is still static.
 
 - [x] Define the smallest lesson-content model.
 - [x] Render explanations, objectives, steps, and checkpoints.
-- Support progress through a lesson and safe reset behavior.
+- [x] Support progress through a lesson and safe reset behavior.
 - Validate content with useful author-facing errors.
 
 **Exit criteria:** one static lesson can be authored as data and completed through

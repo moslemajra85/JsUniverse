@@ -1,10 +1,12 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
 
 describe('App', () => {
   beforeEach(() => {
+    vi.restoreAllMocks()
     window.history.replaceState(null, '', '/')
+    window.localStorage.clear()
   })
 
   it('provides accessible landmarks for the learning workspace', () => {
@@ -100,6 +102,77 @@ describe('App', () => {
     )
     fireEvent.click(screen.getByRole('button', { name: 'Check prediction' }))
 
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '1 of 1 checkpoint complete',
+    )
+  })
+
+  it('restores completed checkpoint progress after remounting', () => {
+    const firstVisit = render(<App />)
+
+    fireEvent.click(
+      screen.getByRole('radio', {
+        name: 'The registered JavaScript event listener runs',
+      }),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Check prediction' }))
+
+    firstVisit.unmount()
+    const restoredVisit = render(<App />)
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '1 of 1 checkpoint complete',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Reset checkpoint' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Reset checkpoint' }))
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '0 of 1 checkpoint complete',
+    )
+
+    restoredVisit.unmount()
+    render(<App />)
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '0 of 1 checkpoint complete',
+    )
+  })
+
+  it('keeps checkpoints usable when browser storage is unavailable', async () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Storage is blocked', 'SecurityError')
+    })
+
+    render(<App />)
+
+    expect(
+      await screen.findByText(
+        'Progress is available for this session but could not be saved.',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Check prediction' }),
+    ).toBeDisabled()
+  })
+
+  it('keeps progress for each lesson without mixing their totals', () => {
+    render(<App />)
+
+    fireEvent.click(
+      screen.getByRole('radio', {
+        name: 'The registered JavaScript event listener runs',
+      }),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Check prediction' }))
+
+    fireEvent.click(screen.getByRole('link', { name: 'Values and variables' }))
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '0 of 1 checkpoint complete',
+    )
+
+    fireEvent.click(screen.getByRole('link', { name: 'Meet the browser' }))
     expect(screen.getByRole('status')).toHaveTextContent(
       '1 of 1 checkpoint complete',
     )

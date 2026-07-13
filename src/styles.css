@@ -659,6 +659,13 @@ h3 {
   font-weight: 800;
 }
 
+.checkpoint-storage-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
 .step-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
