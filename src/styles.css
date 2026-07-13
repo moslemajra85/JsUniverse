@@ -349,11 +349,13 @@ h3 {
 }
 
 .lesson-workspace--transitioning .lesson-header,
-.lesson-workspace--transitioning .lesson-grid {
+.lesson-workspace--transitioning .lesson-grid,
+.lesson-workspace--transitioning .lesson-path {
   animation: lesson-enter 280ms ease-out both;
 }
 
-.lesson-workspace--transitioning .lesson-grid {
+.lesson-workspace--transitioning .lesson-grid,
+.lesson-workspace--transitioning .lesson-path {
   animation-delay: 70ms;
 }
 
@@ -607,6 +609,125 @@ h3 {
   line-height: 1.6;
 }
 
+.lesson-path {
+  max-width: 78rem;
+  margin: 1rem auto 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-large);
+  background: rgba(9, 12, 23, 0.66);
+}
+
+.lesson-path__heading {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.75fr) minmax(16rem, 1.25fr);
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 1.75rem;
+}
+
+.lesson-path__heading h2 {
+  margin-bottom: 0;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.03em;
+}
+
+.lesson-path__heading > p {
+  max-width: 36rem;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.step-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-list > li {
+  min-width: 0;
+}
+
+.lesson-step {
+  height: 100%;
+  min-height: 15rem;
+  padding: 1.25rem;
+  border: 0.0625rem solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface-soft);
+}
+
+.lesson-step--predict {
+  background: linear-gradient(
+    145deg,
+    rgba(143, 124, 255, 0.1),
+    var(--color-surface-soft) 55%
+  );
+}
+
+.lesson-step--practice {
+  background: linear-gradient(
+    145deg,
+    rgba(66, 232, 170, 0.08),
+    var(--color-surface-soft) 55%
+  );
+}
+
+.lesson-step__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.lesson-step__number {
+  color: var(--color-text-muted);
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.67rem;
+}
+
+.lesson-step__kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.lesson-step__mark {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border: 0.0625rem solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-accent);
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.65rem;
+}
+
+.lesson-step h3 {
+  margin-bottom: 0.65rem;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.lesson-step > p {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.76rem;
+  line-height: 1.65;
+}
+
 @keyframes orbit {
   to {
     offset-distance: 100%;
@@ -648,6 +769,18 @@ h3 {
 
   .mentor-note {
     grid-column: 1 / -1;
+  }
+
+  .step-list {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-step {
+    min-height: auto;
+  }
+
+  .lesson-step__meta {
+    margin-bottom: 2rem;
   }
 }
 
@@ -710,6 +843,11 @@ h3 {
 
   .lesson-guide {
     display: block;
+  }
+
+  .lesson-path__heading {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 }
 

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 
@@ -58,6 +58,32 @@ describe('App', () => {
 
     expect(window.location.hash).toBe('#lesson-meet-the-browser')
     expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  it('renders the selected lesson path from structured content', () => {
+    render(<App />)
+
+    const initialPath = screen.getByRole('region', { name: 'Lesson path' })
+    expect(within(initialPath).getAllByRole('listitem')).toHaveLength(3)
+    expect(
+      within(initialPath).getByRole('heading', {
+        level: 3,
+        name: 'Three files become one experience',
+      }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('link', { name: 'Build the DOM' }))
+
+    const updatedPath = screen.getByRole('region', { name: 'Lesson path' })
+    expect(
+      within(updatedPath).getByRole('heading', {
+        level: 3,
+        name: 'Read the document as a tree',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      within(updatedPath).queryByText('Three files become one experience'),
+    ).not.toBeInTheDocument()
   })
 
   it('opens a directly linked lesson from the URL hash', () => {
