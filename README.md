@@ -12,9 +12,9 @@ will encounter in professional work.
 
 ## Current status
 
-The project has a runnable React and TypeScript learning-workspace shell with
-hash-based lesson navigation and continuous integration. The next milestone is
-the smallest lesson-content model and rendering engine.
+The project has a runnable React and TypeScript learning workspace with hash-based
+lesson navigation, structured lesson paths, and continuous integration. The next
+lesson-engine milestone is an interactive checkpoint with explicit progress.
 
 ## Local development
 

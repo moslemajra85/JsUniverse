@@ -1,4 +1,5 @@
 import { defaultLesson, getLessonHash, lessons, type Lesson } from './lessons'
+import { LessonPath } from './LessonPath'
 import { useLessonNavigation } from './useLessonNavigation'
 
 export function App() {
@@ -164,6 +165,8 @@ export function App() {
                 </div>
               </aside>
             </div>
+
+            <LessonPath lesson={activeLesson} />
           </main>
         </div>
       </div>
