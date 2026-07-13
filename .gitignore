@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Production output
+dist/
+
+# Test output
+coverage/
+
+# Local environment files
+*.local
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and operating-system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.sw?
+
+# TypeScript incremental build data
+*.tsbuildinfo
+

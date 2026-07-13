@@ -179,4 +179,3 @@ Completion rate alone is insufficient because it can reward overly easy lessons.
 
 Open decisions should be resolved as late as responsibly possible, with evidence
 from the feature currently being built.
-

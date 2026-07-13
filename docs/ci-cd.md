@@ -36,9 +36,9 @@ represents a gate: later work proceeds only if the previous check succeeds. Afte
 review and merge, CD deploys the exact version that passed validation. A smoke
 check confirms that the deployed application starts and serves its critical path.
 
-This diagram intentionally omits provider-specific details. The deployment host
-and stack have not been selected, so pretending to have a final pipeline now
-would create fragile documentation.
+This diagram intentionally omits deployment-provider details. The application
+stack is selected, but the deployment host is not. Pretending to have a final CD
+pipeline now would create fragile documentation.
 
 ## What the first CI workflow should check
 
@@ -109,4 +109,3 @@ CI/CD files can publish software and access credentials, so they require review
 and testing. Pipeline changes should usually be isolated in a `ci` commit. The
 first workflow will be added only after real project commands exist; otherwise it
 would be a decorative pipeline that cannot verify meaningful behavior.
-

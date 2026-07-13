@@ -10,9 +10,33 @@ will encounter in professional work.
 
 ## Current status
 
-The project is in its documentation and product-definition phase. No technology
-stack has been selected yet. The next milestone is to record the stack decision
-and scaffold the smallest runnable application.
+The project has a runnable React and TypeScript application foundation. Product
+features have not been implemented yet. The next milestone is continuous
+integration for the existing format, lint, type-check, test, and build commands.
+
+## Local development
+
+Requirements:
+
+- Node.js 22.12 or newer;
+- npm 10 or newer.
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Run all local quality checks:
+
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
 
 ## Product principles
 
@@ -56,4 +80,3 @@ is not complete merely because it works on one developer's machine.
 
 See the [engineering workflow](docs/engineering-workflow.md) for the exact
 feature, test, commit, and push cycle.
-
