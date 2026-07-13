@@ -6,8 +6,8 @@ Prediction checkpoints ask learners to commit to an answer before receiving an
 explanation. They turn the prediction stage of a lesson from passive text into a
 small, testable interaction.
 
-The first implementation keeps progress in memory for the active lesson. It does
-not claim durable completion or synchronize progress across devices.
+Checkpoint completion is saved in the current browser. It does not synchronize
+progress across devices.
 
 ## Acceptance criteria
 
@@ -22,22 +22,23 @@ not claim durable completion or synchronize progress across devices.
 - Feedback is announced politely to assistive technology.
 - Reset clears the selection, feedback, and completion state.
 - The lesson path displays completed checkpoints independently of course position.
-- Switching lessons starts with fresh in-memory checkpoint state.
+- Switching lessons restores completion for the selected lesson.
 
 ## State ownership
 
 `PredictionCheckpoint` owns temporary interaction state:
 
 - selected option;
-- idle, incorrect, or correct attempt status;
-- visible feedback.
+- idle or incorrect attempt status;
+- retry feedback derived from that status.
 
-`LessonPath` owns the set of completed prediction-step IDs for the active lesson.
-The child reports completion and reset events; it does not calculate aggregate
-progress.
+The application-level `useCheckpointProgress` hook owns completed
+prediction-step IDs across lessons. `LessonPath` derives the active lesson's
+total. Correct feedback is derived from parent-controlled completion. The child
+reports completion and reset events; it does not calculate aggregate progress.
 
-This boundary keeps answer mechanics reusable while allowing future lesson
-progress to move into a dedicated store without rewriting the form.
+This boundary keeps answer mechanics reusable and isolates browser persistence
+from presentation components.
 
 ## Accessibility
 
@@ -59,7 +60,7 @@ Tests verify that every prediction:
 
 ## Known limitations
 
-- Progress disappears when the lesson component unmounts or the page reloads.
+- Progress is limited to the current browser profile and origin.
 - There is one prediction checkpoint per lesson.
 - Incorrect-attempt counts are not recorded.
 - There are no graduated hints or answer explanations beyond feedback text.
