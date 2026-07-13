@@ -1,3 +1,5 @@
+import { defineLessons } from './lessonValidation'
+
 export type LessonStepKind = 'explain' | 'predict' | 'practice'
 
 interface BaseLessonStep {
@@ -31,7 +33,7 @@ interface PracticeStep extends BaseLessonStep {
 
 export type LessonStep = ExplanationStep | PredictionStep | PracticeStep
 
-interface LessonDefinition {
+export interface LessonDefinition {
   readonly number: number
   readonly slug: string
   readonly phase: string
@@ -49,7 +51,7 @@ export const lessonStepLabels = {
   practice: 'Try it',
 } as const satisfies Record<LessonStepKind, string>
 
-export const lessons = [
+export const lessons = defineLessons([
   {
     number: 1,
     slug: 'meet-the-browser',
@@ -266,7 +268,7 @@ export const lessons = [
       },
     ],
   },
-] as const satisfies readonly LessonDefinition[]
+] as const satisfies readonly LessonDefinition[])
 
 export type Lesson = (typeof lessons)[number]
 
