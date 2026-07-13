@@ -86,6 +86,25 @@ describe('App', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('updates checkpoint progress after a correct prediction', () => {
+    render(<App />)
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '0 of 1 checkpoint complete',
+    )
+
+    fireEvent.click(
+      screen.getByRole('radio', {
+        name: 'The registered JavaScript event listener runs',
+      }),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Check prediction' }))
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      '1 of 1 checkpoint complete',
+    )
+  })
+
   it('opens a directly linked lesson from the URL hash', () => {
     window.history.replaceState(null, '', '#lesson-build-the-dom')
 
