@@ -40,20 +40,34 @@ This diagram intentionally omits deployment-provider details. The application
 stack is selected, but the deployment host is not. Pretending to have a final CD
 pipeline now would create fragile documentation.
 
-## What the first CI workflow should check
+## Implemented CI workflow
 
-After the project is scaffolded, the initial GitHub Actions workflow should:
+The workflow at `.github/workflows/ci.yml`:
 
 1. Run for pull requests and pushes to the primary branch.
 2. Check out the repository.
-3. Install the supported runtime version.
-4. Install dependencies from the lockfile using a reproducible command.
-5. Run formatting and lint checks.
-6. Run unit and integration tests.
-7. Create a production build.
+3. Read the supported Node.js version from `.nvmrc`.
+4. Cache npm's download data using the lockfile as the cache key.
+5. Install exact dependencies with `npm ci`.
+6. Check formatting, static analysis, and TypeScript types.
+7. Run unit and DOM integration tests.
+8. Create a production build.
 
-The workflow should use least-privilege permissions, pin important environment
-versions, and cache dependencies only when it remains correct to do so.
+Each quality gate is a separate step, making a failure easy to locate in GitHub's
+workflow log. The steps share one job so dependencies are installed only once.
+
+The workflow uses read-only repository permissions, does not retain checkout
+credentials, and pins external actions to exact release commits. Concurrent runs
+for the same branch are cancelled when a newer commit makes them obsolete.
+
+`npm ci` differs from `npm install`: it refuses to modify the lockfile and creates
+a clean dependency installation from that lockfile. This makes CI more
+reproducible than resolving potentially different dependency versions on every
+run.
+
+The npm cache stores downloaded package data, not the `node_modules` directory.
+The lockfile remains the source of truth, and `npm ci` still performs the clean
+installation.
 
 ## Why CI is valuable
 
@@ -106,6 +120,6 @@ production deployment, document:
 ## Pipeline changes are code changes
 
 CI/CD files can publish software and access credentials, so they require review
-and testing. Pipeline changes should usually be isolated in a `ci` commit. The
-first workflow will be added only after real project commands exist; otherwise it
-would be a decorative pipeline that cannot verify meaningful behavior.
+and testing. Pipeline changes should usually be isolated in a `ci` commit. This
+first workflow deliberately performs no deployment and receives no deployment
+credentials.
